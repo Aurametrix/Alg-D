@@ -1,27 +1,51 @@
-import std.stdio, std.bigint, std.algorithm, std.range;
+import std.stdio, std.bigint, std.algorithm;
  
-auto cumu(in uint n) {
-    __gshared cache = [[1.BigInt]];
-    foreach (l; cache.length .. n + 1) {
-        auto r = [0.BigInt];
-        foreach (x; 1 .. l + 1)
-            r ~= r.back + cache[l - x][min(x, l - x)];
-        cache ~= r;
+struct Names {
+    BigInt[] p = [1.BigInt];
+ 
+    int opApply(int delegate(ref immutable int, ref BigInt) dg) {
+        int result;
+ 
+        foreach (immutable n; 1 .. int.max) {
+            p.assumeSafeAppend;
+            p ~= 0.BigInt;
+ 
+            foreach (immutable k; 1 .. n + 1) {
+                auto d = n - k * (3 * k - 1) / 2;
+                if (d < 0)
+                    break;
+ 
+                if (k & 1)
+                    p[n] += p[d];
+                else
+                    p[n] -= p[d];
+ 
+                d -= k;
+                if (d < 0)
+                    break;
+ 
+                if (k & 1)
+                    p[n] += p[d];
+                else
+                    p[n] -= p[d];
+            }
+ 
+            result = dg(n, p[n]);
+            if (result) break;
+        }
+ 
+        return result;
     }
-    return cache[n];
-}
- 
-auto row(in uint n) {
-    auto r = n.cumu;
-    return n.iota.map!(i => r[i + 1] - r[i]);
 }
  
 void main() {
-    writeln("Rows:");
-    foreach (x; 1 .. 11)
-        writefln("%2d: %s", x, x.row);
+    immutable ns = [23:0, 123:0, 1234:0, 12345:0];
+    immutable maxNs = ns.byKey.reduce!max;
  
-    writeln("\nSums:");
-    foreach (x; [23, 123, 1234])
-        writeln(x, " ", x.cumu.back);
+    foreach (immutable i, p; Names()) {
+        if (i > maxNs)
+            break;
+        if (i in ns)
+            writefln("%6d: %s", i, p);
+    }
 }
