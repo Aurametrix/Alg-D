@@ -1,95 +1,102 @@
-import std.stdio, std.traits, std.algorithm, std.math;
+///  import std.stdio, std.traits, std.math, std.algorithm ;
+
+import std.stdio, std.traits, std.math, std.typecons, std.typetuple, permutations1;
  
-enum Content { Beer, Coffee, Milk, Tea, Water,
-               Danish, English, German, Norwegian, Swedish,
-               Blue, Green, Red, White, Yellow,
-               Blend, BlueMaster, Dunhill, PallMall, Prince,
-               Bird, Cat, Dog, Horse, Zebra }
-enum Test { Drink, Person, Color, Smoke, Pet }
-enum House { One, Two, Three, Four, Five }
- 
-alias TM = Content[EnumMembers!Test.length][EnumMembers!House.length];
- 
-bool finalChecks(in ref TM M) pure nothrow @safe @nogc {
-  int diff(in Content a, in Content b, in Test ca, in Test cb)
-  nothrow @safe @nogc {
-    foreach (immutable h1; EnumMembers!House)
-      foreach (immutable h2; EnumMembers!House)
-        if (M[ca][h1] == a && M[cb][h2] == b)
-          return h1 - h2;
-    assert(0); // Useless but required.
-  }
- 
-  with (Content) with (Test)
-    return abs(diff(Norwegian, Blue, Person, Color)) == 1 &&
-           diff(Green, White, Color, Color) == -1 &&
-           abs(diff(Horse, Dunhill, Pet, Smoke)) == 1 &&
-           abs(diff(Water, Blend, Drink, Smoke)) == 1 &&
-           abs(diff(Blend, Cat, Smoke, Pet)) == 1;
+uint factorial(in uint n) pure nothrow @nogc @safe
+in {
+    assert(n <= 12);
+} body {
+    uint result = 1;
+    foreach (immutable i; 1 .. n + 1)
+        result *= i;
+    return result;
 }
  
-bool constrained(in ref TM M, in Test atest) pure nothrow @safe @nogc {
-  with (Content) with (Test) with (House)
-    final switch (atest) {
-      case Drink:
-        return M[Drink][Three] == Milk;
-      case Person:
-        foreach (immutable h; EnumMembers!House)
-          if ((M[Person][h] == Norwegian && h != One) ||
-              (M[Person][h] == Danish && M[Drink][h] != Tea))
-            return false;
-        return true;
-      case Color:
-        foreach (immutable h; EnumMembers!House)
-          if ((M[Person][h] == English && M[Color][h] != Red) ||
-              (M[Drink][h] == Coffee && M[Color][h] != Green))
-            return false;
-        return true;
-      case Smoke:
-        foreach (immutable h; EnumMembers!House)
-          if ((M[Color][h] == Yellow && M[Smoke][h] != Dunhill) ||
-              (M[Smoke][h] == BlueMaster && M[Drink][h] != Beer) ||
-              (M[Person][h] == German && M[Smoke][h] != Prince))
-            return false;
-        return true;
-      case Pet:
-        foreach (immutable h; EnumMembers!House)
-          if ((M[Person][h] == Swedish && M[Pet][h] != Dog) ||
-              (M[Smoke][h] == PallMall && M[Pet][h] != Bird))
-            return false;
-        return finalChecks(M);
-    }
+enum Number { One,      Two,     Three,  Four,       Five   }
+enum Color  { Red,      Green,   Blue,   White,      Yellow }
+enum Drink  { Milk,     Coffee,  Water,  Beer,       Tea    }
+enum Smoke  { PallMall, Dunhill, Blend,  BlueMaster, Prince }
+enum Pet    { Dog,      Cat,     Zebra,  Horse,      Bird   }
+enum Nation { British,  Swedish, Danish, Norvegian,  German }
+ 
+enum size_t M = EnumMembers!Number.length;
+ 
+auto nullableRef(T)(ref T item) pure nothrow @nogc {
+    return NullableRef!T(&item);
 }
  
-void show(in ref TM M) {
-  foreach (h; EnumMembers!House) {
-    writef("%5s: ", h);
-    foreach (immutable t; EnumMembers!Test)
-      writef("%10s ", M[t][h]);
-    writeln;
-  }
-}
+bool isPossible(NullableRef!(immutable Number[M]) number,
+                NullableRef!(immutable Color[M])  color=null,
+                NullableRef!(immutable Drink[M])  drink=null,
+                NullableRef!(immutable Smoke[M])  smoke=null,
+                NullableRef!(immutable Pet[M])    pet=null) pure nothrow @safe @nogc {
+  if ((!number.isNull && number[Nation.Norvegian] != Number.One) ||
+      (!color.isNull  && color[Nation.British]    != Color.Red) ||
+      (!drink.isNull  && drink[Nation.Danish]     != Drink.Tea) ||
+      (!smoke.isNull  && smoke[Nation.German]     != Smoke.Prince) ||
+      (!pet.isNull    && pet[Nation.Swedish]      != Pet.Dog))
+    return false;
  
-void solve(ref TM M, in Test t, in size_t n) {
-  if (n == 1 && constrained(M, t)) {
-    if (t < 4) {
-      solve(M, [EnumMembers!Test][t + 1], 5);
-    } else {
-      show(M);
-      return;
+  if (number.isNull || color.isNull || drink.isNull || smoke.isNull ||
+      pet.isNull)
+    return true;
+ 
+  foreach (immutable i; 0 .. M) {
+    if ((color[i]  == Color.Green      && drink[i]  != Drink.Coffee) ||
+        (smoke[i]  == Smoke.PallMall   && pet[i]    != Pet.Bird) ||
+        (color[i]  == Color.Yellow     && smoke[i]  != Smoke.Dunhill) ||
+        (number[i] == Number.Three     && drink[i]  != Drink.Milk) ||
+        (smoke[i]  == Smoke.BlueMaster && drink[i]  != Drink.Beer)||
+        (color[i]  == Color.Blue       && number[i] != Number.Two))
+      return false;
+ 
+    foreach (immutable j; 0 .. M) {
+      if (color[i] == Color.Green && color[j] == Color.White &&
+          number[j] - number[i] != 1)
+        return false;
+ 
+      immutable diff = abs(number[i] - number[j]);
+      if ((smoke[i] == Smoke.Blend && pet[j]   == Pet.Cat       && diff != 1) ||
+          (pet[i]   == Pet.Horse   && smoke[j] == Smoke.Dunhill && diff != 1) ||
+          (smoke[i] == Smoke.Blend && drink[j] == Drink.Water   && diff != 1))
+        return false;
     }
   }
-  foreach (immutable i; 0 .. n) {
-    solve(M, t, n - 1);
-    swap(M[t][n % 2 ? 0 : i], M[t][n - 1]);
-  }
+ 
+  return true;
 }
+ 
+alias N = nullableRef; // At module level scope to be used with UFCS.
  
 void main() {
-  TM M;
-  foreach (immutable t; EnumMembers!Test)
-    foreach (immutable h; EnumMembers!House)
-      M[t][h] = EnumMembers!Content[t * 5 + h];
+  enum size_t FM = M.factorial;
  
-  solve(M, Test.Drink, 5);
+  static immutable Number[M][FM] numberPerms = [EnumMembers!Number].permutations;
+  static immutable Color[M][FM]  colorPerms =  [EnumMembers!Color].permutations;
+  static immutable Drink[M][FM]  drinkPerms =  [EnumMembers!Drink].permutations;
+  static immutable Smoke[M][FM]  smokePerms =  [EnumMembers!Smoke].permutations;
+  static immutable Pet[M][FM]    petPerms =    [EnumMembers!Pet].permutations;
+ 
+  // You can reduce the compile-time computations using four casts like this:
+  // static colorPerms = cast(immutable Color[M][FM])numberPerms;
+ 
+  static immutable Nation[M] nation = [EnumMembers!Nation];
+ 
+  foreach (immutable ref number; numberPerms)
+    if (isPossible(number.N))
+      foreach (immutable ref color; colorPerms)
+        if (isPossible(number.N, color.N))
+          foreach (immutable ref drink; drinkPerms)
+            if (isPossible(number.N, color.N, drink.N))
+              foreach (immutable ref smoke; smokePerms)
+                if (isPossible(number.N, color.N, drink.N, smoke.N))
+                  foreach (immutable ref pet; petPerms)
+                    if (isPossible(number.N, color.N, drink.N, smoke.N, pet.N)) {
+                      writeln("Found a solution:");
+                      foreach (x; TypeTuple!(nation, number, color, drink, smoke, pet))
+                        writefln("%6s: %12s%12s%12s%12s%12s",
+                                 (Unqual!(typeof(x[0]))).stringof,
+                                 x[0], x[1], x[2], x[3], x[4]);
+                      writeln;
+                  }
 }
