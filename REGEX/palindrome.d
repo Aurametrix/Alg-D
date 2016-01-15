@@ -1,14 +1,18 @@
-import std.traits, std.algorithm;
+import std.traits;
  
-bool isPalindrome1(C)(in C[] s) pure /*nothrow*/
-if (isSomeChar!C) {
-    auto s2 = s.dup;
-    s2.reverse(); // works on Unicode too, not nothrow.
-    return s == s2;
+bool isPalindrome2(C)(in C[] s) pure if (isSomeChar!C) {
+    dchar[] dstr;
+    foreach (dchar c; s) // not nothrow
+        dstr ~= c;
+ 
+    for (int i; i < dstr.length / 2; i++)
+        if (dstr[i] != dstr[$ - i - 1])
+            return false;
+    return true;
 }
  
 void main() {
-    alias pali = isPalindrome1;
+    alias isPalindrome2 pali;
     assert(pali(""));
     assert(pali("z"));
     assert(pali("aha"));
@@ -19,3 +23,4 @@ void main() {
     assert(pali("amanaplanacanalpanama"));
     assert(pali("ingirumimusnocteetconsumimurigni"));
     assert(pali("salÃ las"));
+}
