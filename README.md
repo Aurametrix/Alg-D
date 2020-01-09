@@ -15,9 +15,8 @@ edit /etc/dmd.conf
 
 DFLAGS=-I/usr/dmd2/src/phobos -I/usr/dmd2/src/druntime/import -L-L/usr/lib
 
-
-[Faster command line tools(]http://dlang.org/blog/2017/05/24/faster-command-line-tools-in-d/)
-
+[Faster command line tools](http://dlang.org/blog/2017/05/24/faster-command-line-tools-in-d/)
 
 [Diamond - a Full stack Web Framework](https://github.com/DiamondMVC/Diamond)
 
+[Specification](https://dlang.org/spec/spec.html) - reference manual
