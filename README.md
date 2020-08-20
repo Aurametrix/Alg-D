@@ -22,3 +22,7 @@ DFLAGS=-I/usr/dmd2/src/phobos -I/usr/dmd2/src/druntime/import -L-L/usr/lib
 [Specification](https://dlang.org/spec/spec.html) - reference manual
 
 [Web framework](https://github.com/huntlabs/hunt-framework)
+
+### misc
+
+[Porting a Golang and Rust CLI tool to D](https://pingfrommorocco.blogspot.com/2020/08/porting-golang-and-rust-cli-tool-to-d.html) - [github](https://github.com/azihassan/hashtrack-client)
