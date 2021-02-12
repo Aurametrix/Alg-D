@@ -5,10 +5,10 @@ D is a language with C-like syntax and static typing.
 Combines efficiency, control, and modeling power with safety and programmer productivity.
 
 Downloads
-http://dlang.org/download.html
-http://digitalmars.com/d/download.html
-http://mono-d.alexanderbothe.com/download/
-http://michelf.ca/projects/d-for-xcode/
+[Dlang](http://dlang.org/download.html)
+[Digitalmars](http://digitalmars.com/d/download.html)
+[Mono-D](http://mono-d.alexanderbothe.com/download/)
+[Xcode](http://michelf.ca/projects/d-for-xcode/)
 
 
 edit /etc/dmd.conf
@@ -25,4 +25,8 @@ DFLAGS=-I/usr/dmd2/src/phobos -I/usr/dmd2/src/druntime/import -L-L/usr/lib
 
 ### misc
 
-[Porting a Golang and Rust CLI tool to D](https://pingfrommorocco.blogspot.com/2020/08/porting-golang-and-rust-cli-tool-to-d.html) - [github](https://github.com/azihassan/hashtrack-client)
++ [Porting a Golang and Rust CLI tool to D](https://pingfrommorocco.blogspot.com/2020/08/porting-golang-and-rust-cli-tool-to-d.html) - [github](https://github.com/azihassan/hashtrack-client)
+
++ [D idioms](https://p0nce.github.io/d-idioms/)
+
++ [Wbassmbly](http://webassembly.arsdnet.net/)
