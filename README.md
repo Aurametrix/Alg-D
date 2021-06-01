@@ -32,3 +32,4 @@ DFLAGS=-I/usr/dmd2/src/phobos -I/usr/dmd2/src/druntime/import -L-L/usr/lib
 + [Wbassmbly](http://webassembly.arsdnet.net/)
 
 + [Who is using D language?](https://dlang.org/orgs-using-d.html)
++ [Driving with D](https://dlang.org/blog/2021/06/01/driving-with-d/)
