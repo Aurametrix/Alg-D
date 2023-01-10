@@ -29,6 +29,8 @@ DFLAGS=-I/usr/dmd2/src/phobos -I/usr/dmd2/src/druntime/import -L-L/usr/lib
 
 + [D idioms](https://p0nce.github.io/d-idioms/)
 
++ [Book on programming in D](http://ddili.org/ders/d.en/index.html)
+
 + [Wbassmbly](http://webassembly.arsdnet.net/)
 
 + [Who is using D language?](https://dlang.org/orgs-using-d.html)
