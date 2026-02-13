@@ -36,3 +36,4 @@ DFLAGS=-I/usr/dmd2/src/phobos -I/usr/dmd2/src/druntime/import -L-L/usr/lib
 + [Who is using D language?](https://dlang.org/orgs-using-d.html)
 + [Driving with D](https://dlang.org/blog/2021/06/01/driving-with-d/)
 + [Teaching D from Scratch](https://dlang.org/blog/2021/12/23/teaching-d-from-scratch-is-it-a-viable-first-language/)
++ [Feb 2026 discussion](https://news.ycombinator.com/item?id=46985147)
